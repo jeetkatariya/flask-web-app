@@ -54,8 +54,9 @@
     <title>IU Careers</title>
   </head>
   <body>
+    {% include 'nav.html' %}
     <div class = "container ">
-        <h1 class="text-center mt-2">IU Careers</h1>
+        <!-- <h1 class="text-center mt-2">IU Careers</h1> -->
         <img class = "img-fluid" id="home" src = "./static/home.jpeg" height=380>
     
         <h2 class="text-center mt-2 mb-4" >About IU</h2>
@@ -72,11 +73,13 @@
       <!-- <div style="text-align:center; "> -->
 
       <div style="text-align:center;"">
-      <button type="button" class="btn btn-primary"
-        >Contact Us</button>
+      <a href="mailto:jkkatari@iu.edu?subject=Job%20Inquiry%2F%20Question%20about%20xx%20role&body=My%20name%3A%20%3Cyour%20name%20here%3E%0D%0A%0D%0AMy%20doubts%3A%20%3Cask%20your%20doubts%3E" type="button" class="btn btn-primary"
+        >Contact Us</a>
       </div>
-    
+      
       <p class="text-center">~ Jeet Katariya</p>
     </div>
+
+    {% include 'footer.html' %}
   </body>
 </html>
