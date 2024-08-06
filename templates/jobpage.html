@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {% include 'bootstrap.html' %} 
+    <title>{{job.title}} - IU Careers</title>
+  </head>
+  <body>
+    {% include 'nav.html' %}
+    {% include 'nav.html' %}
+    <div class = "container ">
+        <a class="text-center mt-2">IU Careers</a>
+        <img class = "img-fluid" id="home" src = "./static/home.jpeg" height=380>
+
+      <h3 class="mb-2">{{job.title}}</h3>
+      <p class="lead mt-0">{{job.location}}</p>
+      <h4>Requirements</h4>
+      <p>{{job.requirements}}</p>
+      <h4>Responsibilities</h4>
+      <p>{{job.responsibilities}}</p>
+      <h4>Salary</h4>
+      <p>{{job.currency}}{{job.salary}}</p>
+
+      <div style="text-align:center;"">
+      <a href="mailto:jkkatari@iu.edu?subject=Job%20Inquiry%2F%20Question%20about%20xx%20role&body=My%20name%3A%20%3Cyour%20name%20here%3E%0D%0A%0D%0AMy%20doubts%3A%20%3Cask%20your%20doubts%3E" type="button" class="btn btn-primary"
+        >Contact Us</a>
+      </div>
+
+      <p class="text-center">~ Jeet Katariya</p>
+    </div>
+
+    {% include 'footer.html' %}
+  </body>
+</html>

@@ -74,7 +74,6 @@ import os
 
 app = Flask(__name__)
 
-# Function to get jobs from the database
 def get_jobs():
     original_password = os.environ['DB_PASSWORD']
     encoded_password = urllib.parse.quote_plus(original_password)
@@ -94,6 +93,24 @@ def get_jobs():
 
     return jobs
 
+def get_job(id):
+  original_password = os.environ['DB_PASSWORD']
+  encoded_password = urllib.parse.quote_plus(original_password)
+
+  db_user = os.environ['DB_USER']
+  connection_string = f'postgresql+psycopg2://{db_user}:{encoded_password}@aws-0-us-west-1.pooler.supabase.com:6543/postgres'
+
+  engine = sqlalchemy.create_engine(connection_string)
+  
+  with engine.connect() as conn:
+    result = conn.execute(sqlalchemy.text("SELECT * FROM iu_jobs WHERE id = :id"), {"id": id})
+
+  rows = result.mappings().all()
+  if len(rows) == 0:
+    return None
+  else:
+    return dict(rows[0])
+
 @app.route('/')
 def landing_page():
     jobs = get_jobs()
@@ -103,6 +120,15 @@ def landing_page():
 def api_call():
   jobs = get_jobs()
   return jsonify(jobs)
+
+@app.route("/job/<id>")
+def show_job(id):
+  job = get_job(id)
+
+  if not job:
+    return "Not Found", 404
+    
+  return render_template("jobpage.html", job=job)
 
 if __name__ == '__main__':
     app.run(debug=True)
