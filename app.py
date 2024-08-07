@@ -67,7 +67,7 @@
 #   app.run(host="0.0.0.0", debug=True) 
 
 # app.py
-from flask import Flask, render_template, jsonify 
+from flask import Flask, render_template, jsonify, request
 import sqlalchemy
 import urllib.parse
 import os
@@ -111,6 +111,36 @@ def get_job(id):
   else:
     return dict(rows[0])
 
+def add_application_to_db(job_id, application):
+  original_password = os.environ['DB_PASSWORD']
+  encoded_password = urllib.parse.quote_plus(original_password)
+
+  db_user = os.environ['DB_USER']
+  connection_string = f'postgresql+psycopg2://{db_user}:{encoded_password}@aws-0-us-west-1.pooler.supabase.com:6543/postgres'
+
+  engine = sqlalchemy.create_engine(connection_string)
+
+  with engine.connect() as conn:
+
+    query = sqlalchemy.text("""
+        INSERT INTO applications (job_id, full_name, email, linkedin, education, experience, resume) 
+        VALUES (:job_id, :full_name, :email, :linkedin, :education, :experience, :resume)
+    """)
+
+    try:
+      conn.execute(query, {
+          'job_id': job_id,
+          'full_name': application['full_name'],
+          'email': application['email'],
+          'linkedin': application['linkedin'],
+          'education': application['education'],
+          'experience': application['experience'],
+          'resume': application['resume']
+      })
+      print("Application added to the database successfully.")
+    except Exception as e:
+      print(f"Error inserting application: {e}")
+
 @app.route('/')
 def landing_page():
     jobs = get_jobs()
@@ -130,5 +160,20 @@ def show_job(id):
     
   return render_template("jobpage.html", job=job)
 
+@app.route("/job/<int:id>/apply", methods=["POST"])
+def apply_to_job(id): 
+    data = request.form.to_dict()
+    job = get_job(id)
+
+    add_application_to_db(id, data)
+    
+    if not job:
+        return "Not Found", 404
+    
+    return render_template('application_submitted.html', application=data, job=job)
+
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    print(app.url_map)  # Print registered routes for debugging
+    app.run(host="0.0.0.0", debug=True)
